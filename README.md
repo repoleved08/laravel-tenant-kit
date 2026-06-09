@@ -7,6 +7,20 @@
 
 One codebase, isolated database per workspace, subdomain routing, team permissions, Stripe subscriptions, Filament admin, and English/Arabic localization — wired and ready to extend.
 
+## Screenshots
+
+| Landing page | Admin panel |
+|:---:|:---:|
+| ![Landing page](docs/screenshots/landing.png) | ![Admin panel](docs/screenshots/admin-panel.png) |
+
+| Tenant dashboard | Billing |
+|:---:|:---:|
+| ![Tenant dashboard](docs/screenshots/tenant-dashboard.png) | ![Billing page](docs/screenshots/billing.png) |
+
+| Team management | |
+|:---:|:---:|
+| ![Team management](docs/screenshots/team-management.png) | |
+
 ---
 
 ## Why this kit?
