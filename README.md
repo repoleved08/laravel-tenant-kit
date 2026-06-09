@@ -2,10 +2,80 @@
 
 [![Tests](https://github.com/mohammedelkarsh/laravel-tenant-kit/actions/workflows/tests.yml/badge.svg)](https://github.com/mohammedelkarsh/laravel-tenant-kit/actions/workflows/tests.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/mohammedelkarsh/laravel-tenant-kit?label=stable)](https://github.com/mohammedelkarsh/laravel-tenant-kit/releases/tag/v1.0.0)
+[![GitHub stars](https://img.shields.io/github/stars/mohammedelkarsh/laravel-tenant-kit?style=social)](https://github.com/mohammedelkarsh/laravel-tenant-kit/stargazers)
 
-**Production-ready Laravel starter for building multi-tenant SaaS products.**
+## Build production-ready multi-tenant SaaS apps in minutes — not weeks.
 
-One codebase, isolated database per workspace, subdomain routing, team permissions, Stripe subscriptions, Filament admin, and English/Arabic localization — wired and ready to extend.
+Laravel-based, scalable, and ready for real customers.  
+One codebase · isolated database per workspace · Stripe billing · Filament admin.
+
+> **v1.0.0 — Stable foundation** · [View release notes](https://github.com/mohammedelkarsh/laravel-tenant-kit/releases/tag/v1.0.0)
+
+---
+
+### If this saves you time, please leave a star — it helps the project reach more developers.
+
+[![Star on GitHub](https://img.shields.io/badge/⭐_Star_on_GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/mohammedelkarsh/laravel-tenant-kit/stargazers)
+
+---
+
+## Why this exists
+
+Most SaaS developers spend **weeks** rebuilding the same foundation: tenancy, auth, billing, admin panel, teams.
+
+This kit removes that burden — so you start building your **product** on day one.
+
+| Without this kit | With this kit |
+|------------------|---------------|
+| 2–3 months of infrastructure work | **~10 minutes** to a running multi-tenant app |
+| Roll your own tenant isolation | Database-per-tenant, built in |
+| Wire Stripe + admin from scratch | Cashier + Filament included |
+| Guess at production patterns | CI, smoke tests, deployment docs |
+
+---
+
+## Who is this for?
+
+Developers building **SaaS products with Laravel** who want a real starting point — not a tutorial snippet.
+
+**Great for:**
+
+- SaaS platforms
+- B2B subscription apps
+- Internal multi-workspace tools
+- CRM / project tools with per-customer isolation
+- Arabic + English products (RTL ready)
+
+---
+
+## What's included
+
+- Multi-tenancy with **full database isolation** per workspace
+- Subdomain + custom domain routing
+- Authentication (Laravel Breeze) — central app **and** each workspace
+- Teams, roles & permissions (owner / admin / member)
+- Email invitations
+- Stripe subscriptions (Laravel Cashier) per workspace
+- Filament admin panel (`/admin`)
+- Workspace signup + CLI provisioning
+- **English & Arabic** (RTL) — easy to add more languages
+- GitHub Actions CI + 30-point smoke test script
+
+---
+
+## At a glance
+
+✔ Create isolated workspaces in seconds  
+✔ Each customer runs in **complete isolation** (separate database)  
+✔ Stripe billing scaffold ready  
+✔ Filament admin to manage all workspaces  
+✔ Production-minded structure — extend, don't rewrite  
+✔ i18n: English + Arabic out of the box  
+
+**Tech stack:** Laravel 13 · PHP 8.4 · Filament 5 · Stancl Tenancy · Spatie Permission · Cashier (Stripe) · Breeze · Tailwind · Vite · MySQL
+
+---
 
 ## Screenshots
 
@@ -21,436 +91,227 @@ One codebase, isolated database per workspace, subdomain routing, team permissio
 |:---:|:---:|
 | ![Team management](docs/screenshots/team-management.png) | |
 
----
-
-## Why this kit?
-
-Most “multi-tenant Laravel” repos give you a thin shell. This project is a **complete foundation**:
-
-| You get | Out of the box |
-|---------|----------------|
-| Tenant isolation | Separate MySQL database per workspace |
-| Routing | Central domain + `{workspace}.yourdomain.com` |
-| Auth | Laravel Breeze on central app **and** inside each workspace |
-| Teams | Owner / admin / member roles + email invitations |
-| Billing | Laravel Cashier (Stripe) billed per workspace |
-| Admin | Filament panel to manage workspaces & domains |
-| i18n | English + Arabic with RTL, extensible to more locales |
-| CLI | `tenant:provision` to create workspaces from the terminal |
-
----
-
-## How it works
-
-**Important:** creating a workspace does **not** copy code or deploy a new app. All tenants share the **same Laravel installation**. Each workspace gets its own **database** and **domain record**.
-
-```mermaid
-sequenceDiagram
-    participant Browser
-    participant Server
-    participant Laravel
-    participant CentralDB
-    participant TenantDB
-
-    Browser->>Server: GET /dashboard — Host: demo.yourdomain.com
-    Server->>Laravel: public/index.php (same code for all hosts)
-    Laravel->>Laravel: Extract subdomain demo from Host header
-    Laravel->>CentralDB: Lookup domains WHERE domain = demo
-    CentralDB-->>Laravel: tenant_id = demo
-    Laravel->>TenantDB: Switch connection to tenantdemo
-    Laravel->>Browser: Dashboard with demo's data only
-```
-
-### Architecture overview
-
-```mermaid
-flowchart TB
-    subgraph Central["Central app — yourdomain.com"]
-        Landing[Landing & signup]
-        Admin[Filament /admin]
-        Billing[Stripe /billing]
-        CentralDB[(Central MySQL)]
-    end
-
-    subgraph TenantA["Workspace A — acme.yourdomain.com"]
-        AuthA[Breeze auth]
-        TeamA[Teams & roles]
-        DashA[Dashboard]
-        TenantDBA[(tenantacme)]
-    end
-
-    subgraph TenantB["Workspace B — demo.yourdomain.com"]
-        AuthB[Breeze auth]
-        TeamB[Teams & roles]
-        DashB[Dashboard]
-        TenantDBB[(tenantdemo)]
-    end
-
-    Landing --> CentralDB
-    Admin --> CentralDB
-    Billing --> CentralDB
-
-    Central -->|subdomain routing| TenantA
-    Central -->|subdomain routing| TenantB
-
-    AuthA --> TenantDBA
-    TeamA --> TenantDBA
-    AuthB --> TenantDBB
-    TeamB --> TenantDBB
-```
-
-| Layer | URL example | Responsibility |
-|-------|-------------|----------------|
-| **Central** | `yourdomain.com` | Marketing, workspace signup, platform admin, Stripe billing |
-| **Tenant** | `acme.yourdomain.com` | End-user login, teams, workspace-specific data |
-| **Database** | `tenant` + `{id}` | Full data isolation — e.g. `tenantacme`, `tenantdemo` |
-
-### What happens when a workspace is created?
-
-**Via web** (`/workspaces/create`) or **CLI** (`tenant:provision`):
-
-1. A row is inserted into `tenants` (id = subdomain slug, e.g. `acme`)
-2. A row is inserted into `domains` (domain = `acme`)
-3. Stancl Tenancy automatically:
-   - Creates database `tenantacme`
-   - Runs migrations from `database/migrations/tenant/`
-   - Seeds roles (owner, admin, member)
-4. Browser redirects to `http://acme.yourdomain.com`
-
-**Web vs CLI difference:**
-
-| Method | Owner user created? |
-|--------|---------------------|
-| Web signup | No — first user registers manually on the workspace |
-| CLI with `--admin=email` | Yes — owner account created inside tenant DB |
-
----
-
-## Tech stack
-
-- **Laravel 13** + PHP 8.4+
-- **[Stancl Tenancy](https://tenancyforlaravel.com)** — database-per-tenant, subdomain & custom domain identification
-- **Laravel Breeze** — authentication (central + tenant)
-- **Filament 5** — platform admin panel
-- **Spatie Permission** — roles inside each workspace
-- **Laravel Cashier** — Stripe subscriptions per tenant
-- **Tailwind CSS** + Vite
-
----
-
-## Requirements
-
-- PHP 8.4+
-- Composer 2
-- Node.js 20+
-- MySQL 8+ (recommended) or SQLite for PHPUnit
-- Web server with wildcard subdomain support (production)
+> **Live demo** (after `db:seed`): [demo workspace](http://demo.laravel-tenant-kit.test) · [admin panel](/admin)
 
 ---
 
 ## Quick start
 
-### 1. Clone & install
-
 ```bash
 git clone https://github.com/mohammedelkarsh/laravel-tenant-kit.git
 cd laravel-tenant-kit
-
-composer install
-npm install
-cp .env.example .env
-php artisan key:generate
+composer install && npm install
+cp .env.example .env && php artisan key:generate
+php artisan migrate && php artisan db:seed && npm run build
 ```
 
-### 2. Configure `.env`
+Add to hosts: `127.0.0.1 laravel-tenant-kit.test` and `127.0.0.1 demo.laravel-tenant-kit.test`
+
+Open `http://laravel-tenant-kit.test` — done.
+
+<details>
+<summary><strong>Full local setup (.env, credentials, verify)</strong></summary>
+
+### Configure `.env`
 
 ```env
 APP_URL=http://laravel-tenant-kit.test
 CENTRAL_DOMAIN=laravel-tenant-kit.test
-
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
 DB_DATABASE=laravel_tenant_kit
 DB_USERNAME=root
 DB_PASSWORD=your_password
-
-APP_LOCALE=en
 APP_AVAILABLE_LOCALES=en,ar
 ```
 
-### 3. Migrate, seed & build assets
-
-```bash
-php artisan migrate
-php artisan db:seed
-npm run build
-```
-
-`db:seed` creates the platform admin, a **demo** workspace (`demo`), and owner user `demo@demo.test`.
-
-### 4. Local domains
-
-Add to your hosts file (Laragon/Valet often do this automatically):
-
-```
-127.0.0.1 laravel-tenant-kit.test
-127.0.0.1 demo.laravel-tenant-kit.test
-```
-
-### 5. Verify
-
-```bash
-php scripts/system-test.php
-```
-
-Expected: **30/30 tests passed**.
-
----
-
-## Default credentials
+### Default credentials
 
 | Context | URL | Email | Password |
 |---------|-----|-------|----------|
-| Platform admin | `http://laravel-tenant-kit.test/admin` | `admin@laravel-tenant-kit.test` | `password` |
+| Admin | `/admin` | `admin@laravel-tenant-kit.test` | `password` |
 | Demo workspace | `http://demo.laravel-tenant-kit.test` | `demo@demo.test` | `password` |
 
----
+### Verify
 
-## Key URLs
+```bash
+php scripts/system-test.php   # expect 30/30 passed
+```
 
-| URL | Description |
-|-----|-------------|
-| `/` | SaaS landing page |
-| `/workspaces/create` | Create a new workspace (web) |
-| `/admin` | Filament admin — manage all workspaces |
-| `/billing/{workspace}` | Stripe subscription management (central) |
-| `http://{workspace}.yourdomain.com` | Tenant workspace home |
-| `http://{workspace}.yourdomain.com/team` | Team members & invitations |
-| `/locale/{code}` | Switch language (session-based) |
+</details>
 
 ---
 
-## CLI — provision a workspace
+## How it works
 
-Create a fully migrated workspace with an owner account:
+One Laravel app serves everyone. Each workspace gets its own database — **no code is copied**, no separate deployment per customer.
 
-```bash
-php artisan tenant:provision acme "Acme Corp" \
-  --admin=boss@acme.com \
-  --password=secret
+```mermaid
+flowchart LR
+    subgraph Central["yourdomain.com"]
+        Admin[Admin]
+        Billing[Billing]
+        Signup[Signup]
+    end
+
+    subgraph Tenants["Workspaces"]
+        A["acme.yourdomain.com"]
+        B["demo.yourdomain.com"]
+    end
+
+    Central -->|subdomain| A
+    Central -->|subdomain| B
+    A --> DB1[(tenantacme)]
+    B --> DB2[(tenantdemo)]
 ```
 
-Add to hosts: `127.0.0.1 acme.laravel-tenant-kit.test`
+When someone visits `acme.yourdomain.com`, Laravel identifies the workspace from the URL and connects to `tenantacme` automatically.
 
-Other useful commands:
+<details>
+<summary><strong>What happens when a workspace is created?</strong></summary>
+
+1. Record in `tenants` + `domains` tables (central DB)
+2. New database `tenant{id}` is created
+3. Tenant migrations + role seeds run automatically
+4. User is redirected to `http://{id}.yourdomain.com`
+
+**CLI** (with owner account):
 
 ```bash
-php artisan tenants:migrate    # Run tenant migrations for all workspaces
-php artisan tenants:seed       # Re-seed tenant databases
+php artisan tenant:provision acme "Acme Corp" --admin=boss@acme.com --password=secret
 ```
+
+</details>
+
+---
+
+## Design philosophy
+
+Built for **scalability**, **clean separation**, and **developer experience**:
+
+- Central platform logic stays on the main domain
+- Tenant data never mixes — isolated databases
+- Extend via services, Filament resources, and tenant migrations
+- Sensible defaults; no magic you can't trace
+
+---
+
+## Production-ready proof
+
+- GitHub Actions CI on every push
+- `scripts/system-test.php` — 30 automated checks (HTTP, DB, auth, i18n)
+- Tenant-aware cache, filesystem, and queue bootstrappers (Stancl)
+- Config / route / view caching documented for deploy
+- Wildcard subdomain + SSL deployment guide below
 
 ---
 
 ## Localization
 
-English and Arabic are included. Users switch language from the header on the central app, tenant workspaces, and Filament admin.
-
-### Configure enabled languages
+**English & Arabic included** — RTL works out of the box. Add more languages in `config/locales.php`.
 
 ```env
-APP_LOCALE=en
-APP_FALLBACK_LOCALE=en
 APP_AVAILABLE_LOCALES=en,ar
 ```
 
-English only: `APP_AVAILABLE_LOCALES=en`
+<details>
+<summary><strong>Add a new language (e.g. French)</strong></summary>
 
-### Add a new language (e.g. French)
+1. Register in `config/locales.php`
+2. Set `APP_AVAILABLE_LOCALES=en,ar,fr`
+3. Copy `lang/en/app.php` → `lang/fr/app.php` and translate
+4. Run `php artisan optimize:clear`
 
-1. Register in `config/locales.php`:
-
-```php
-'fr' => [
-    'name' => 'French',
-    'native' => 'Français',
-    'dir' => 'ltr',
-],
-```
-
-2. Enable in `.env`: `APP_AVAILABLE_LOCALES=en,ar,fr`
-
-3. Copy and translate:
-
-```bash
-cp lang/en/app.php lang/fr/app.php
-cp lang/ar.json lang/fr.json
-```
-
-4. Clear caches: `php artisan optimize:clear`
-
-| File | Purpose |
-|------|---------|
-| `lang/{locale}/app.php` | Kit UI strings (landing, billing, team, Filament labels) |
-| `lang/{locale}.json` | Breeze auth/profile strings |
-| `config/locales.php` | Locale metadata (name, native label, text direction) |
+</details>
 
 ---
 
 ## Stripe billing (optional)
 
-Add to `.env`:
-
 ```env
 STRIPE_KEY=pk_test_...
 STRIPE_SECRET=sk_test_...
-STRIPE_WEBHOOK_SECRET=whsec_...
 STRIPE_PRICE_STARTER=price_...
 STRIPE_PRICE_PRO=price_...
 ```
 
-Visit `/billing/demo` while logged in as the platform admin to test checkout. Billing runs on the **central** domain because Cashier is attached to the `Tenant` model in the central database.
+Visit `/billing/demo` while logged in as platform admin.
 
 ---
 
 ## Custom domains
 
-1. Open a workspace in Filament → **Domains** tab
-2. Add the full domain (e.g. `app.acme.com`)
-3. Point DNS A/CNAME to your server
-4. Tenancy resolves via `InitializeTenancyByDomainOrSubdomain`
+Filament → workspace → **Domains** → add `app.client.com` → point DNS to your server.
 
 ---
 
 ## Production deployment
 
-### DNS (required for subdomains)
-
-Configure a **wildcard** record so every workspace subdomain hits the same server:
-
 ```
-yourdomain.com      →  A  →  server IP
-*.yourdomain.com    →  A  →  server IP
+yourdomain.com     →  A  →  server IP
+*.yourdomain.com   →  A  →  server IP   # wildcard required
 ```
 
-Use a **wildcard SSL** certificate (Let's Encrypt DNS challenge or commercial wildcard).
+MySQL user needs `CREATE DATABASE` permission. **VPS / Laravel Forge recommended** over shared hosting.
 
-### MySQL permissions
+```bash
+php artisan migrate --force && php artisan config:cache && php artisan view:cache
+```
 
-The app creates databases programmatically (`tenant{id}`). Your MySQL user needs `CREATE DATABASE` permission.
+<details>
+<summary><strong>Hosting notes & troubleshooting</strong></summary>
 
 ### Recommended hosting
 
-| Hosting type | Suitability |
-|--------------|-------------|
-| VPS / Cloud (Forge, Hetzner, DO) | ✅ Recommended |
-| Laravel-specialized (Laravel Cloud, Ploi) | ✅ Recommended |
-| Shared hosting (SiteGround, etc.) | ⚠️ Limited — wildcard DNS, DB creation, and Laravel constraints |
+| Type | Fit |
+|------|-----|
+| VPS / Cloud | ✅ Best |
+| Laravel Forge / Ploi | ✅ Best |
+| Shared hosting | ⚠️ Limited (wildcard DNS, DB creation) |
 
-### Environment
+### Common fixes
 
-```env
-APP_ENV=production
-APP_DEBUG=false
-CENTRAL_DOMAIN=yourdomain.com
-APP_URL=https://yourdomain.com
-```
-
-Run after deploy:
-
+**`/admin` 500 after login (Windows):**
 ```bash
-php artisan migrate --force
-php artisan db:seed --force
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
+php artisan optimize:clear && php artisan view:cache
 ```
+
+**Tenant subdomain 404:** check wildcard DNS + domain record in Filament.
+
+**No CSS on tenant:** run `npm run build`.
+
+</details>
+
+---
+
+## Roadmap
+
+Planned for upcoming releases — contributions welcome:
+
+- [ ] OAuth / social login (Google, GitHub)
+- [ ] SaaS analytics dashboard
+- [ ] Video demo GIF in README
+- [ ] Docker Compose dev environment
+- [ ] API tokens per workspace
+- [ ] Usage-based billing meters
 
 ---
 
 ## Project structure
 
 ```
-app/
-├── Console/Commands/ProvisionTenantCommand.php   # CLI workspace creation
-├── Filament/                                     # Admin panel resources
-├── Http/Controllers/
-│   ├── BillingController.php                     # Central Stripe billing
-│   ├── TenantRegistrationController.php          # Web workspace signup
-│   └── Tenant/                                   # Tenant-scoped controllers
-├── Services/TenantProvisioner.php                # Core provisioning logic
-└── Support/Locales.php                           # i18n helper
-
-config/
-├── tenancy.php                                   # Stancl Tenancy config
-├── locales.php                                   # Available languages
-└── plans.php                                     # Stripe plan definitions
-
-database/
-├── migrations/                                   # Central DB migrations
-├── migrations/tenant/                            # Per-tenant migrations
-└── seeders/                                      # Admin, demo workspace, roles
-
-routes/
-├── web.php                                       # Central domain routes only
-├── tenant.php                                    # All workspace subdomain routes
-└── auth.php                                      # Central Breeze auth
-
-lang/
-├── en/app.php                                    # English kit strings
-├── ar/app.php                                    # Arabic kit strings
-└── ar.json                                       # Arabic Breeze strings
-
-scripts/system-test.php                           # 30-point smoke test
+app/Services/TenantProvisioner.php   # workspace creation logic
+app/Filament/                        # admin panel
+routes/web.php                       # central domain
+routes/tenant.php                    # all workspace subdomains
+database/migrations/tenant/          # per-tenant schema
+lang/en|ar/                          # translations
+scripts/system-test.php              # smoke tests
 ```
-
----
-
-## Testing
-
-```bash
-# Full smoke test (HTTP, DB, auth, i18n)
-php scripts/system-test.php
-
-# PHPUnit (CI uses SQLite)
-php artisan test
-```
-
-GitHub Actions runs `php artisan test` on every push to `main`.
-
----
-
-## Troubleshooting
-
-### `/admin` returns 500 after login (Windows / Laragon)
-
-Filament compiles many Blade views. Pre-cache them:
-
-```bash
-php artisan optimize:clear
-php artisan view:cache
-```
-
-`composer install` runs `view:cache` automatically via the `setup` script.
-
-### Tenant subdomain returns 404
-
-- Check hosts / DNS: `ping demo.yourdomain.com`
-- Confirm domain exists: Filament → Workspaces → Domains
-- Wildcard DNS must point to the same `public/` directory
-
-### Assets missing on tenant subdomain
-
-`Stancl\Tenancy\Features\ViteBundler` is enabled in `config/tenancy.php` so Vite assets load from `/build/` correctly.
-
-### New workspace has no CSS
-
-Run `npm run build` on the server after deploy.
 
 ---
 
 ## Contributing
 
-Issues and pull requests are welcome. For large changes, open an issue first to discuss the approach.
+Issues and PRs welcome. Open an issue first for large changes.
 
 ---
 
@@ -461,5 +322,5 @@ MIT — see [LICENSE](LICENSE).
 ---
 
 <p align="center">
-  Built with Laravel · <a href="https://github.com/mohammedelkarsh/laravel-tenant-kit">Star on GitHub</a> if this saved you time
+  <strong>Help this project grow</strong> — <a href="https://github.com/mohammedelkarsh/laravel-tenant-kit/stargazers">leave a ⭐ on GitHub</a>
 </p>
