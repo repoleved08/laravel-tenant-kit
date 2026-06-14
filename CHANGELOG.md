@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here.
 
+## [1.2.3] — 2026-06-14
+
+### Fixed
+
+- **CI smoke test** — run Filament `/admin/tenants` via isolated `check-tenants-page.php` subprocess (avoids polluted in-process kernel state on fresh install)
+
 ## [1.2.2] — 2026-06-14
 
 ### Fixed

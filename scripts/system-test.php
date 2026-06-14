@@ -171,12 +171,20 @@ if ($admin) {
     $kernel->terminate($request, $response);
     record($results, $passed, $failed, 'Auth Central', 'Billing demo', $status >= 200 && $status < 400, "HTTP {$status}");
 
-    $request = Illuminate\Http\Request::create("http://{$host}/admin/tenants", 'GET');
-    $request->headers->set('HOST', $host);
-    $response = $kernel->handle($request);
-    $status = $response->getStatusCode();
-    $kernel->terminate($request, $response);
-    record($results, $passed, $failed, 'Filament', 'Tenants list (admin)', $status >= 200 && $status < 400, "HTTP {$status}");
+    $checkScript = __DIR__.'/check-tenants-page.php';
+    $checkOutput = [];
+    $checkExitCode = 0;
+    exec(escapeshellarg(PHP_BINARY).' '.escapeshellarg($checkScript).' 2>&1', $checkOutput, $checkExitCode);
+    $checkDetail = trim(implode(' ', $checkOutput));
+    record(
+        $results,
+        $passed,
+        $failed,
+        'Filament',
+        'Tenants list (admin)',
+        $checkExitCode === 0,
+        $checkDetail !== '' ? $checkDetail : "exit {$checkExitCode}",
+    );
 
     Illuminate\Support\Facades\Auth::guard('web')->logout();
 }
