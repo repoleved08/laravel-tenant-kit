@@ -21,4 +21,6 @@ Route::middleware('auth:sanctum')->group(function () {
         ->middleware('abilities:workspaces:read');
     Route::get('/workspaces/{tenant}/subscription', [WorkspaceController::class, 'subscription'])
         ->middleware('abilities:workspaces:read');
+    Route::get('/workspaces/{tenant}/usage', [WorkspaceController::class, 'usage'])
+        ->middleware('abilities:workspaces:read');
 });

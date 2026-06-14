@@ -72,7 +72,8 @@ curl http://laravel-tenant-kit.test/api/workspaces \
 | GET | `/api/workspaces` | `workspaces:read` | List all workspaces |
 | POST | `/api/workspaces` | `workspaces:write` | Create workspace (`name`, `subdomain`) |
 | GET | `/api/workspaces/{id}` | `workspaces:read` | Workspace details |
-| GET | `/api/workspaces/{id}/subscription` | `workspaces:read` | Stripe subscription status |
+| GET | `/api/workspaces/{id}/subscription` | `workspaces:read` | Stripe subscription status + usage summary |
+| GET | `/api/workspaces/{id}/usage` | `workspaces:read` | Current billing period usage meters |
 
 ### Subscription response example
 
@@ -88,10 +89,54 @@ curl http://laravel-tenant-kit.test/api/workspaces \
     "on_trial": false,
     "cancelled": false,
     "ends_at": null,
-    "trial_ends_at": null
+    "trial_ends_at": null,
+    "usage": {
+      "period_start": "2026-06-01",
+      "period_end": "2026-06-30",
+      "meters": {
+        "api_calls": {
+          "label": "API calls",
+          "description": "Authenticated API requests (central + tenant).",
+          "quantity": 12,
+          "event_name": "api_calls"
+        },
+        "team_seats": {
+          "label": "Team seats",
+          "description": "Active members in the workspace.",
+          "quantity": 3,
+          "event_name": "team_seats"
+        }
+      }
+    }
   }
 }
 ```
+
+### Usage response example
+
+```json
+{
+  "data": {
+    "workspace_id": "demo",
+    "period_start": "2026-06-01",
+    "period_end": "2026-06-30",
+    "meters": {
+      "api_calls": {
+        "label": "API calls",
+        "quantity": 12,
+        "event_name": "api_calls"
+      },
+      "team_seats": {
+        "label": "Team seats",
+        "quantity": 3,
+        "event_name": "team_seats"
+      }
+    }
+  }
+}
+```
+
+Configure meters in `config/usage.php`. Set `USAGE_SYNC_TO_STRIPE=true` to forward events to Stripe Billing Meters via Cashier.
 
 ---
 

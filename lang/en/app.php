@@ -95,6 +95,8 @@ return [
         'subscribe' => 'Subscribe',
         'back_to_workspace' => '← Back to workspace',
         'stripe_not_configured_error' => 'Stripe is not configured.',
+        'usage_title' => 'Usage this period',
+        'usage_period' => ':start → :end',
     ],
 
     'plans' => [

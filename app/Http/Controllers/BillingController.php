@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Tenant;
+use App\Services\UsageMeter;
+use App\Support\UsagePresenter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -11,11 +13,16 @@ class BillingController extends Controller
 {
     public function show(Tenant $tenant): View
     {
+        if (config('usage.enabled')) {
+            app(UsageMeter::class)->snapshotTeamSeats($tenant);
+        }
+
         return view('billing.show', [
             'tenant' => $tenant,
             'plans' => config('plans'),
             'subscription' => $tenant->subscription('default'),
             'stripeConfigured' => filled(config('cashier.key')),
+            'usage' => UsagePresenter::forTenant($tenant),
         ]);
     }
 

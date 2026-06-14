@@ -173,6 +173,7 @@ if ($admin) {
             'GET /api/workspaces' => ['GET', '/api/workspaces'],
             'GET /api/workspaces/demo' => ['GET', '/api/workspaces/demo'],
             'GET /api/workspaces/demo/subscription' => ['GET', '/api/workspaces/demo/subscription'],
+            'GET /api/workspaces/demo/usage' => ['GET', '/api/workspaces/demo/usage'],
         ] as $label => [$method, $path]) {
             $r = http($method, "{$httpBase}{$path}", $host, $token);
             audit($results, $passed, $failed, 'API Central', $label, $r['status'] === 200, "HTTP {$r['status']}");

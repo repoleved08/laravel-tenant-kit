@@ -1,0 +1,92 @@
+name: tenant_kit
+description: Laravel Tenant Kit central + tenant API adapter
+# Match APP_URL in your .env; override via --base-url when running api-operator
+base_url: http://laravel-tenant-kit.test
+
+auth:
+  type: bearer
+  header: Authorization
+  env_token: TENANT_KIT_API_TOKEN
+
+system_prompt: |
+  You are API Operator for Laravel Tenant Kit.
+  Use tools to manage workspaces and team invitations.
+  Dangerous actions require user confirmation.
+  Reply in the user's language (Arabic or English).
+
+tools:
+  - name: list_workspaces
+    description: List all workspaces from central API
+    method: GET
+    path: /api/workspaces
+    requires_ability: workspaces:read
+
+  - name: create_workspace
+    description: Create workspace via POST /api/workspaces
+    method: POST
+    path: /api/workspaces
+    dangerous: true
+    requires_ability: workspaces:write
+    parameters:
+      name:
+        type: string
+        required: true
+      subdomain:
+        type: string
+        required: true
+    body:
+      name: "{name}"
+      subdomain: "{subdomain}"
+
+  - name: get_workspace
+    description: Get workspace details by id or subdomain
+    method: GET
+    path: /api/workspaces/{workspace_id}
+    requires_ability: workspaces:read
+    parameters:
+      workspace_id:
+        type: string
+        required: true
+
+  - name: get_subscription
+    description: Get Stripe subscription status for a workspace
+    method: GET
+    path: /api/workspaces/{workspace_id}/subscription
+    requires_ability: workspaces:read
+    parameters:
+      workspace_id:
+        type: string
+        required: true
+
+  - name: get_usage
+    description: Get current billing period usage meters for a workspace
+    method: GET
+    path: /api/workspaces/{workspace_id}/usage
+    requires_ability: workspaces:read
+    parameters:
+      workspace_id:
+        type: string
+        required: true
+
+  - name: invite_team_member
+    description: Invite a member on the tenant subdomain API
+    method: POST
+    path: /api/team/invitations
+    host: tenant
+    tenant_param: subdomain
+    dangerous: true
+    requires_ability: team:invite
+    parameters:
+      subdomain:
+        type: string
+        required: true
+      email:
+        type: string
+        required: true
+      role:
+        type: string
+        required: false
+        default: member
+    body:
+      email: "{email}"
+      role: "{role}"

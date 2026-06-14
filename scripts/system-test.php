@@ -226,6 +226,14 @@ if ($admin) {
         $status = $response->getStatusCode();
         $kernel->terminate($request, $response);
         record($results, $passed, $failed, 'API Central', 'Workspace subscription endpoint', $status === 200, "HTTP {$status}");
+
+        $request = Illuminate\Http\Request::create("http://{$host}/api/workspaces/demo/usage", 'GET');
+        $request->headers->set('HOST', $host);
+        $request->headers->set('Authorization', $bearer);
+        $response = $kernel->handle($request);
+        $status = $response->getStatusCode();
+        $kernel->terminate($request, $response);
+        record($results, $passed, $failed, 'API Central', 'Workspace usage endpoint', $status === 200, "HTTP {$status}");
     }
 }
 

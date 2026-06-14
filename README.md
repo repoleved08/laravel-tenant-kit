@@ -166,7 +166,7 @@ For Docker on port **8080**, set `APP_URL=http://laravel-tenant-kit.test:8080` (
 ### Verify
 
 ```bash
-php scripts/system-test.php   # expect 42/42 passed
+php scripts/system-test.php   # expect 43/43 passed
 ```
 
 </details>
@@ -287,7 +287,7 @@ Filament `/admin` includes **SaaS analytics** widgets: workspace growth, active 
 ## Production-ready proof
 
 - GitHub Actions CI on every push
-- `scripts/system-test.php` — 39 automated checks (HTTP, DB, auth, API, i18n)
+- `scripts/system-test.php` — 43 automated checks (HTTP, DB, auth, API, i18n)
 - Tenant-aware cache, filesystem, queue, and Redis bootstrappers (Stancl)
 - Docker Compose for reproducible local dev
 - Config / route / view caching documented for deploy
@@ -385,7 +385,9 @@ php artisan optimize:clear && php artisan view:cache
 - [x] API rate limiting & token abilities (v1.2.1)
 - [x] Workspace subscription API & team invites API (v1.2.1)
 - [x] Workspace suspend from Filament (v1.2.1)
-- [ ] Usage-based billing meters (v1.3.0)
+- [x] Usage-based billing meters (v1.3.0)
+- [ ] api-operator integration via PyPI (v1.3.1)
+- [ ] Optional KYC module (v1.4.0)
 
 ---
 

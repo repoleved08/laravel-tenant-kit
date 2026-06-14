@@ -31,6 +31,26 @@
                 @endif
             </div>
 
+            @if (config('usage.enabled'))
+                <div class="bg-white shadow-sm sm:rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-900">{{ __('app.billing.usage_title') }}</h3>
+                    <p class="mt-1 text-sm text-gray-500">
+                        {{ __('app.billing.usage_period', ['start' => $usage['period_start'], 'end' => $usage['period_end']]) }}
+                    </p>
+                    <dl class="mt-4 grid sm:grid-cols-2 gap-4">
+                        @foreach ($usage['meters'] as $key => $meter)
+                            <div class="rounded-lg border border-gray-200 p-4">
+                                <dt class="text-sm font-medium text-gray-700">{{ $meter['label'] }}</dt>
+                                <dd class="mt-1 text-2xl font-semibold text-gray-900" dir="ltr">{{ number_format($meter['quantity']) }}</dd>
+                                @if (! empty($meter['description']))
+                                    <p class="mt-2 text-xs text-gray-500">{{ $meter['description'] }}</p>
+                                @endif
+                            </div>
+                        @endforeach
+                    </dl>
+                </div>
+            @endif
+
             <div class="grid sm:grid-cols-2 gap-6">
                 @foreach ($plans as $key => $plan)
                     <div class="bg-white shadow-sm sm:rounded-lg p-6 border border-gray-200">

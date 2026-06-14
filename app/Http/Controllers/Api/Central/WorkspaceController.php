@@ -7,6 +7,7 @@ use App\Http\Requests\StoreTenantRequest;
 use App\Models\Tenant;
 use App\Services\TenantProvisioner;
 use App\Support\SubscriptionPresenter;
+use App\Support\UsagePresenter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -34,10 +35,29 @@ class WorkspaceController extends Controller
 
     public function subscription(Tenant $tenant): JsonResponse
     {
+        if (config('usage.enabled')) {
+            app(\App\Services\UsageMeter::class)->snapshotTeamSeats($tenant);
+        }
+
         return response()->json([
             'data' => array_merge(
                 ['workspace_id' => $tenant->id],
                 SubscriptionPresenter::forTenant($tenant),
+                ['usage' => UsagePresenter::forTenant($tenant)],
+            ),
+        ]);
+    }
+
+    public function usage(Tenant $tenant): JsonResponse
+    {
+        if (config('usage.enabled')) {
+            app(\App\Services\UsageMeter::class)->snapshotTeamSeats($tenant);
+        }
+
+        return response()->json([
+            'data' => array_merge(
+                ['workspace_id' => $tenant->id],
+                UsagePresenter::forTenant($tenant),
             ),
         ]);
     }

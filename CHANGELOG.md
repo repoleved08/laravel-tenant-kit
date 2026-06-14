@@ -2,6 +2,17 @@
 
 All notable changes to this project are documented here.
 
+## [1.3.0] — 2026-06-14
+
+### Added
+
+- **Usage-based billing** — track workspace meters (`api_calls`, `team_seats`) per calendar month in `usage_records`
+- **API** — `GET /api/workspaces/{id}/usage` returns current period usage; subscription endpoint includes usage summary
+- **Middleware** — authenticated API requests increment `api_calls` for the resolved workspace
+- **Billing UI** — usage section on `/billing/{tenant}` when `USAGE_BILLING_ENABLED=true`
+- **Stripe optional sync** — set `USAGE_SYNC_TO_STRIPE=true` to forward meter events via Cashier `reportMeterEvent()`
+- **api-operator adapter** — `get_usage` tool in `integrations/api-operator/adapter.yaml`
+
 ## [1.2.3] — 2026-06-14
 
 ### Fixed

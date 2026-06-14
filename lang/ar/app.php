@@ -95,6 +95,8 @@ return [
         'subscribe' => 'اشترك',
         'back_to_workspace' => '← العودة لمساحة العمل',
         'stripe_not_configured_error' => 'Stripe غير مُعدّ.',
+        'usage_title' => 'الاستخدام في هذه الفترة',
+        'usage_period' => ':start ← :end',
     ],
 
     'plans' => [

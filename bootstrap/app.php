@@ -32,6 +32,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'ability' => \Laravel\Sanctum\Http\Middleware\CheckForAnyAbility::class,
             'tenant.not_suspended' => \App\Http\Middleware\EnsureTenantNotSuspended::class,
         ]);
+
+        $middleware->api(append: [
+            \App\Http\Middleware\RecordApiUsage::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
