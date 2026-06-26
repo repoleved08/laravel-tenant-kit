@@ -149,4 +149,88 @@ return [
         'active' => 'نشطة',
     ],
 
+    'api_operator' => [
+        'title' => 'مساعد Tenant',
+        'subtitle' => 'وكيل مساحات العمل الموجّه',
+        'greeting' => "مرحباً! أنا مساعد Tenant Kit.\nاختر موضوعاً من الأزرار وسأرشدك خطوة بخطوة — أو اكتب بحرية في أي وقت.",
+        'placeholder' => 'اكتب إجابتك…',
+        'send' => 'إرسال',
+        'thinking' => 'جاري التفكير…',
+        'confirm_hint' => 'الإجراءات الحساسة تحتاج كتابة yes للتأكيد.',
+        'unavailable' => 'خدمة API Operator غير شغّالة. شغّل api-operator serve.',
+        'disabled' => 'شات API Operator معطّل.',
+        'ui' => [
+            'chip_back' => '← رجوع',
+            'chip_main_menu' => '← القائمة الرئيسية',
+            'chip_cancel' => 'إلغاء',
+            'chip_confirm' => 'تأكيد',
+            'chip_yes' => 'نعم، تابع',
+            'chip_no' => 'لا، إلغاء',
+            'flow_cancelled' => 'تمام. شو بدك نعمل غير هيك؟',
+            'confirm_placeholder' => 'اكتب yes للتأكيد أو no للإلغاء',
+            'confirm_hint' => 'اضغط نعم أو لا بالأسفل، أو اكتب yes / no.',
+            'help' => "أقدر أساعدك في:\n\n• مساحات العمل — عرض، إنشاء، أو تفاصيل\n• الفوترة — الاستخدام والاشتراك لمساحة معينة\n• الفريق — دعوة عضو\n\nاختر موضوعاً من الأزرار. سأسألك التفاصيل خطوة بخطوة.",
+            'menus' => [
+                'main' => [
+                    'prompt' => 'شو بدك تعمل؟',
+                    'options' => [
+                        ['id' => 'workspaces', 'label' => 'مساحات العمل', 'menu' => 'workspaces'],
+                        ['id' => 'billing', 'label' => 'الفوترة والاستخدام', 'menu' => 'billing'],
+                        ['id' => 'team', 'label' => 'الفريق والدعوات', 'menu' => 'team'],
+                        ['id' => 'help', 'label' => 'كيف بتساعدني؟', 'help' => true],
+                    ],
+                ],
+                'workspaces' => [
+                    'prompt' => 'مساحات العمل — شو بدك؟',
+                    'options' => [
+                        ['id' => 'ws_list', 'label' => 'عرض مساحاتي', 'command' => 'list workspaces'],
+                        ['id' => 'ws_create', 'label' => 'إنشاء مساحة جديدة', 'flow' => 'create_workspace'],
+                        ['id' => 'back', 'label' => '← القائمة الرئيسية', 'menu' => 'main'],
+                    ],
+                ],
+                'billing' => [
+                    'prompt' => 'الفوترة — اختر التقرير:',
+                    'options' => [
+                        ['id' => 'bill_usage', 'label' => 'عرض الاستخدام', 'flow' => 'usage'],
+                        ['id' => 'bill_sub', 'label' => 'عرض الاشتراك', 'flow' => 'subscription'],
+                        ['id' => 'back', 'label' => '← القائمة الرئيسية', 'menu' => 'main'],
+                    ],
+                ],
+                'team' => [
+                    'prompt' => 'الفريق — شو بدك؟',
+                    'options' => [
+                        ['id' => 'team_invite', 'label' => 'دعوة عضو', 'flow' => 'invite_member'],
+                        ['id' => 'back', 'label' => '← القائمة الرئيسية', 'menu' => 'main'],
+                    ],
+                ],
+            ],
+            'flows' => [
+                'create_workspace' => [
+                    'name_prompt' => 'ممتاز! شو اسم مساحة العمل؟ (مثال: Acme Corp)',
+                    'subdomain_prompt' => 'اختر نطاقاً فرعياً — بيصير جزء من الرابط (مثال: acme)',
+                    'confirm_prompt' => 'جاهز لإنشاء ":name" على :subdomain.:domain؟',
+                    'invalid_subdomain' => 'استخدم حروفاً وأرقاماً وشرطات فقط (مثال: acme).',
+                ],
+                'usage' => [
+                    'workspace_prompt' => 'أي مساحة بدك أتحقق من استخدامها؟',
+                ],
+                'subscription' => [
+                    'workspace_prompt' => 'أي مساحة بدك أتحقق من اشتراكها؟',
+                ],
+                'invite_member' => [
+                    'email_prompt' => 'شو الإيميل اللي نبعث له الدعوة؟',
+                    'workspace_prompt' => 'شو الـ subdomain للمساحة؟ (مثال: demo)',
+                    'role_prompt' => 'شو الدور؟',
+                    'confirm_prompt' => 'ندعو :email إلى :workspace كـ :role؟',
+                    'invalid_email' => 'أدخل إيميل صحيح.',
+                ],
+            ],
+            'roles' => [
+                'member' => 'عضو',
+                'admin' => 'مدير',
+            ],
+            'workspace_suggestions' => ['demo', 'moh'],
+        ],
+    ],
+
 ];

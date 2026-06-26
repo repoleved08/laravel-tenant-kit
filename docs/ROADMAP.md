@@ -7,8 +7,8 @@ Planned releases from the current stable tag through **v1.4.0**. Dates are not c
 | Version | Theme | Repo | Status |
 |---------|--------|------|--------|
 | **v1.2.3** | CI / smoke-test hardening | tenant-kit | ✅ Released |
-| **v1.3.0** | Usage-based billing | tenant-kit | 🟡 Ready locally — pending tag |
-| **v1.3.1** | [api-operator](https://github.com/mohammedelkarsh/api-operator) (PyPI) integration | tenant-kit + [api-operator](https://github.com/mohammedelkarsh/api-operator) | 📋 Planned |
+| **v1.3.0** | Usage-based billing | tenant-kit | ✅ Released |
+| **v1.3.1** | [api-operator](https://github.com/mohammedelkarsh/api-operator) (PyPI) + in-app guided agent | tenant-kit + [api-operator](https://github.com/mohammedelkarsh/api-operator) | ✅ Ready for tag `v1.3.1` |
 | **v1.4.0** | Optional KYC module | tenant-kit + [kyc-ai/laravel](https://packagist.org/packages/kyc-ai/laravel) | 📋 Planned |
 
 **Semver:** patch (1.2.x) = fixes · minor (1.3.x, 1.4.0) = new features · major (2.0) = breaking changes (not planned yet).
@@ -30,35 +30,33 @@ Planned releases from the current stable tag through **v1.4.0**. Dates are not c
 | Tests | `UsageBillingTest`, system-test + page-audit coverage |
 | Adapter stub | `get_usage` tool in `integrations/api-operator/adapter.yaml` |
 
-**Release checklist:** CHANGELOG, README roadmap `[x]`, tag `v1.3.0`, CI green on Docker path.
+**Release checklist:** CHANGELOG, README roadmap `[x]`, tag `v1.3.0`, CI green on Docker path. ✅
 
 ---
 
-## v1.3.1 — api-operator integration (PyPI)
+## v1.3.1 — api-operator + guided agent ✅
 
-**Goal:** First-class docs and adapter for [api-operator](https://github.com/mohammedelkarsh/api-operator) — install via [PyPI](https://pypi.org/project/api-operator/), operate Tenant Kit APIs without clicking Filament.
+**Goal:** Operate Tenant Kit via [api-operator](https://github.com/mohammedelkarsh/api-operator) (CLI + HTTP) and an in-app guided chat on the central domain.
 
-The agent lives in a **separate repo**: [api-operator](https://github.com/mohammedelkarsh/api-operator) (`pip install api-operator`). Tenant Kit stays PHP-only; no Python in `require`.
-
-### api-operator (PyPI package)
-
-| Item | Notes |
+| Item | Status |
 |------|--------|
-| PyPI publish | `pip install api-operator` (core); `pip install api-operator[llm]` for OpenAI planner |
-| Stable tag | Promote from current `v0.9.0` beta → `v1.0.0` on PyPI when API is frozen |
-| Tenant Kit example | Keep `examples/tenant-kit-adapter/` in sync with tenant-kit adapter |
-| Integration script | `scripts/integration_tenant_kit.py` — CI optional marker |
+| `docs/api-operator.md` | ✅ |
+| `integrations/api-operator/` README + adapter | ✅ |
+| In-app chat widget + guided flows | ✅ |
+| Laravel proxy (`/api-operator/chat`) | ✅ |
+| Docker `operator` profile + setup scripts | ✅ |
+| README + screenshots + demo GIF | ✅ |
+| `ApiOperatorChatTest` + adapter tests | ✅ |
+| Sync with api-operator `examples/tenant-kit-adapter/` | ✅ |
+| Integration test documented | ✅ |
 
-### tenant-kit (integration layer)
+**Release checklist:** tag `v1.3.1`, GitHub release, optional run `integration_tenant_kit.py` against Docker.
 
-| Item | Notes |
-|------|--------|
-| `adapter.yaml` | Full tool set synced with `integrations/api-operator/` (workspaces, subscription, usage, team invite) |
-| Docs | `docs/api-operator.md` — tokens, CLI, `api-operator serve`, Docker notes |
-| README | Quick start: `pip install api-operator` + link to adapter |
-| Smoke | Document or optional CI step running integration script against Docker stack |
+The Python package lives in a **separate repo**: [api-operator](https://github.com/mohammedelkarsh/api-operator) (`pip install api-operator`). Tenant Kit stays PHP-only; the operator runs as a sidecar.
 
-**Out of scope for v1.3.1:** embedding Python in Laravel, Filament chat widget, or billing meter for LLM tokens (see after v1.4).
+**Parallel track (api-operator repo):** PyPI `v0.10.0` (Docker `connect_host`, formatters); promote to `v1.0.0` when the agent HTTP API is frozen.
+
+**Still out of scope for v1.3.1:** embedding Python in PHP, AI usage meters on `usage_records` (see after v1.4).
 
 ---
 

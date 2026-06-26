@@ -97,6 +97,14 @@ async function main() {
     await page.waitForTimeout(1500);
     await frame(page, '06-admin');
 
+    await page.goto(`${centralBase}/dashboard`, { waitUntil: 'networkidle' });
+    const fab = page.locator('[data-api-operator-fab]');
+    if ((await fab.count()) > 0) {
+        await fab.click();
+        await page.waitForTimeout(1200);
+        await frame(page, '07-agent-chat');
+    }
+
     console.log('Capturing static screenshots...');
     await page.goto(`${centralBase}/`, { waitUntil: 'networkidle' });
     await shot(page, 'landing.png');
@@ -117,6 +125,16 @@ async function main() {
     await loginTenant(page);
     await page.goto(`${demoBase}/team`, { waitUntil: 'networkidle' });
     await shot(page, 'team-management.png');
+
+    await page.goto(`${centralBase}/login`, { waitUntil: 'networkidle' });
+    await loginCentral(page);
+    await page.goto(`${centralBase}/dashboard`, { waitUntil: 'networkidle' });
+    const chatFab = page.locator('[data-api-operator-fab]');
+    if ((await chatFab.count()) > 0) {
+        await chatFab.click();
+        await page.waitForTimeout(1200);
+        await shot(page, 'api-operator-chat.png');
+    }
 
     await browser.close();
 

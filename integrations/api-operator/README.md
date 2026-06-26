@@ -2,30 +2,47 @@
 
 Connect [api-operator](https://github.com/mohammedelkarsh/api-operator) to this app via **YAML adapter** — no Python in this repo.
 
-Install from PyPI: [pypi.org/project/api-operator](https://pypi.org/project/api-operator/)
+- **PyPI:** [pypi.org/project/api-operator](https://pypi.org/project/api-operator/)
+- **Full guide:** [docs/api-operator.md](../../docs/api-operator.md)
+
+## In-app guided agent
+
+When `API_OPERATOR_ENABLED=true` and the operator is running, logged-in users on the **central** domain see a chat button (dashboard, Filament, landing). Tokens stay server-side via Laravel proxy routes.
 
 ## Prerequisites
 
 1. Tenant Kit running (match `APP_URL` in `.env`)
 2. `php artisan migrate --seed`
-3. api-operator installed: `pip install api-operator` (or clone the [GitHub repo](https://github.com/mohammedelkarsh/api-operator))
+3. `pip install api-operator`
 
-## Quick test
+## Quick start
 
 ```bash
-git clone https://github.com/mohammedelkarsh/api-operator.git
-cd api-operator
-python scripts/integration_tenant_kit.py
+# Issue a central token (see docs/api-operator.md)
+export TENANT_KIT_API_TOKEN="your-sanctum-token"
+
+api-operator chat \
+  --adapter yaml \
+  --config integrations/api-operator/adapter.yaml \
+  --base-url http://laravel-tenant-kit.test
 ```
 
-Interactive chat from this repo:
+Docker on port 8080:
 
 ```bash
 api-operator chat \
   --adapter yaml \
   --config integrations/api-operator/adapter.yaml \
-  --base-url http://laravel-tenant-kit.test \
-  --token "YOUR_SANCTUM_TOKEN"
+  --base-url http://laravel-tenant-kit.test:8080 \
+  --token "YOUR_TOKEN"
+```
+
+## Integration test
+
+From an [api-operator](https://github.com/mohammedelkarsh/api-operator) clone:
+
+```bash
+python scripts/integration_tenant_kit.py --base-url http://laravel-tenant-kit.test:8080
 ```
 
 ## Files
@@ -35,8 +52,4 @@ api-operator chat \
 | `adapter.yaml` | HTTP tools for Sanctum API |
 | `README.md` | This guide |
 
-Keep in sync with `api-operator/examples/tenant-kit-adapter/` when upgrading.
-
-## Local dev credentials
-
-See the main [README](../../README.md) for seeded admin and demo workspace accounts.
+Keep in sync with `api-operator/examples/tenant-kit-adapter/` when upgrading either repo.

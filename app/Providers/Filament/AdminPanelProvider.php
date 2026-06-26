@@ -14,7 +14,11 @@ use Filament\Support\Colors\Color;
 use App\Filament\Widgets\SaaSAnalyticsWidget;
 use App\Filament\Widgets\WorkspacesGrowthChart;
 use App\Filament\Widgets\WorkspacesStatsWidget;
+use App\Support\ApiOperator;
+use Filament\View\PanelsRenderHook;
 use Filament\Widgets\AccountWidget;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Vite;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -61,6 +65,22 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->renderHook(PanelsRenderHook::HEAD_END, function (): string {
+                if (! ApiOperator::visibleOnRequest()) {
+                    return '';
+                }
+
+                return '<meta name="csrf-token" content="'.csrf_token().'" />'
+                    .'<script type="module" src="'.e(Vite::asset('resources/js/api-operator-widget.js')).'"></script>';
+            })
+            ->renderHook(PanelsRenderHook::BODY_END, function (): string {
+                if (! ApiOperator::visibleOnRequest()) {
+                    return '';
+                }
+
+                return view('partials.api-operator-widget')->render()
+                    .'<script>window.initApiOperatorWidgets?.();</script>';
+            });
     }
 }
