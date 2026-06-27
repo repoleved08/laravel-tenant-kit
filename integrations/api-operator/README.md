@@ -13,7 +13,7 @@ When `API_OPERATOR_ENABLED=true` and the operator is running, logged-in users on
 
 1. Tenant Kit running (match `APP_URL` in `.env`)
 2. `php artisan migrate --seed`
-3. `pip install api-operator`
+3. `pip install api-operator==0.10.0`
 
 ## Quick start
 

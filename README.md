@@ -300,7 +300,7 @@ API_OPERATOR_ENABLED=true
 API_OPERATOR_URL=http://127.0.0.1:8100
 ```
 
-2. Start the operator (`pip install api-operator` or Docker — see below).
+2. Start the operator (`pip install api-operator==0.10.0` or Docker — see below).
 3. Log in on the central domain → open `/dashboard` or `/admin` → click the chat button (bottom-right).
 
 Flows: create workspace, check usage/subscription, invite teammates — with confirm step for dangerous actions.
@@ -308,7 +308,7 @@ Flows: create workspace, check usage/subscription, invite teammates — with con
 ### CLI
 
 ```bash
-pip install api-operator
+pip install api-operator==0.10.0
 export TENANT_KIT_API_TOKEN="your-sanctum-token"
 
 api-operator chat \

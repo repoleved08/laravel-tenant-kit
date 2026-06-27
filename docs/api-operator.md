@@ -7,13 +7,13 @@ Operate Tenant Kit from the command line or an HTTP agent — no Filament clicks
 ## Install
 
 ```bash
-pip install api-operator
+pip install api-operator==0.10.0
 ```
 
 Optional OpenAI planner (instead of rule-based mock planner):
 
 ```bash
-pip install "api-operator[llm]"
+pip install "api-operator[llm]==0.10.0"
 ```
 
 Requires **Python 3.11+**.
@@ -158,7 +158,7 @@ When logged in on the **central** domain, a floating chat button appears (bottom
 1. Install and start the operator:
 
 ```bash
-pip install api-operator
+pip install api-operator==0.10.0
 api-operator serve --host 127.0.0.1 --port 8100 --adapter yaml --planner mock
 ```
 
