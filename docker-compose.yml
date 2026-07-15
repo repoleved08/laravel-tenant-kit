@@ -91,6 +91,21 @@ services:
     networks:
       - tenant-kit
 
+  api-operator:
+    profiles: ["operator"]
+    build:
+      context: ../api-operator
+      dockerfile: Dockerfile
+    volumes:
+      - .:/tenant-kit:ro
+    environment:
+      API_OPERATOR_CORS_ORIGINS: ${APP_URL:-http://laravel-tenant-kit.test:8080}
+      TENANT_KIT_API_TOKEN: ${TENANT_KIT_API_TOKEN:-}
+    ports:
+      - "${API_OPERATOR_PORT:-8100}:8100"
+    networks:
+      - tenant-kit
+
 networks:
   tenant-kit:
     driver: bridge

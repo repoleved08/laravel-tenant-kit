@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ApiOperatorChatController;
 use App\Http\Controllers\BillingController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\ProfileController;
@@ -21,6 +22,11 @@ Route::get('/workspaces/create', [TenantRegistrationController::class, 'create']
 
 Route::post('/workspaces', [TenantRegistrationController::class, 'store'])
     ->name('tenants.store');
+
+Route::middleware('auth')->prefix('api-operator')->name('api-operator.')->group(function () {
+    Route::get('/status', [ApiOperatorChatController::class, 'status'])->name('status');
+    Route::post('/chat', [ApiOperatorChatController::class, 'store'])->name('chat');
+});
 
 Route::get('/dashboard', function () {
     return view('dashboard');

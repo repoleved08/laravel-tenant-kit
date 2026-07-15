@@ -149,4 +149,88 @@ return [
         'active' => 'Active',
     ],
 
+    'api_operator' => [
+        'title' => 'Tenant Assistant',
+        'subtitle' => 'Your guided workspace agent',
+        'greeting' => "Hello! I'm your Tenant Kit assistant.\nPick a topic below and I'll guide you step by step — or type freely anytime.",
+        'placeholder' => 'Type your answer…',
+        'send' => 'Send',
+        'thinking' => 'Thinking…',
+        'confirm_hint' => 'Sensitive actions need typing yes to confirm.',
+        'unavailable' => 'API Operator service is not running. Start api-operator serve.',
+        'disabled' => 'API Operator chat is disabled.',
+        'ui' => [
+            'chip_back' => '← Back',
+            'chip_main_menu' => '← Main menu',
+            'chip_cancel' => 'Cancel',
+            'chip_confirm' => 'Confirm',
+            'chip_yes' => 'Yes, proceed',
+            'chip_no' => 'No, cancel',
+            'flow_cancelled' => 'No problem. What else can I help you with?',
+            'confirm_placeholder' => 'Type yes to confirm or no to cancel',
+            'confirm_hint' => 'Please tap Yes or No below, or type yes / no.',
+            'help' => "I can help you with:\n\n• Workspaces — list, create, or view details\n• Billing — usage and subscription for a workspace\n• Team — invite a teammate\n\nChoose a topic below to get started. I'll ask for details one step at a time.",
+            'menus' => [
+                'main' => [
+                    'prompt' => 'What would you like to do?',
+                    'options' => [
+                        ['id' => 'workspaces', 'label' => 'Workspaces', 'menu' => 'workspaces'],
+                        ['id' => 'billing', 'label' => 'Billing & usage', 'menu' => 'billing'],
+                        ['id' => 'team', 'label' => 'Team & invites', 'menu' => 'team'],
+                        ['id' => 'help', 'label' => 'How can you help?', 'help' => true],
+                    ],
+                ],
+                'workspaces' => [
+                    'prompt' => 'Workspaces — what do you need?',
+                    'options' => [
+                        ['id' => 'ws_list', 'label' => 'List my workspaces', 'command' => 'list workspaces'],
+                        ['id' => 'ws_create', 'label' => 'Create a new workspace', 'flow' => 'create_workspace'],
+                        ['id' => 'back', 'label' => '← Main menu', 'menu' => 'main'],
+                    ],
+                ],
+                'billing' => [
+                    'prompt' => 'Billing — pick a report:',
+                    'options' => [
+                        ['id' => 'bill_usage', 'label' => 'View usage', 'flow' => 'usage'],
+                        ['id' => 'bill_sub', 'label' => 'View subscription', 'flow' => 'subscription'],
+                        ['id' => 'back', 'label' => '← Main menu', 'menu' => 'main'],
+                    ],
+                ],
+                'team' => [
+                    'prompt' => 'Team — what would you like?',
+                    'options' => [
+                        ['id' => 'team_invite', 'label' => 'Invite a teammate', 'flow' => 'invite_member'],
+                        ['id' => 'back', 'label' => '← Main menu', 'menu' => 'main'],
+                    ],
+                ],
+            ],
+            'flows' => [
+                'create_workspace' => [
+                    'name_prompt' => 'Great! What should we call the workspace? (e.g. Acme Corp)',
+                    'subdomain_prompt' => 'Pick a subdomain — this becomes part of the URL (e.g. acme)',
+                    'confirm_prompt' => 'Ready to create workspace ":name" at :subdomain.:domain?',
+                    'invalid_subdomain' => 'Please use letters, numbers, and hyphens only (e.g. acme).',
+                ],
+                'usage' => [
+                    'workspace_prompt' => 'Which workspace should I check usage for?',
+                ],
+                'subscription' => [
+                    'workspace_prompt' => 'Which workspace should I check subscription for?',
+                ],
+                'invite_member' => [
+                    'email_prompt' => 'What email should we send the invitation to?',
+                    'workspace_prompt' => 'Which workspace subdomain? (e.g. demo)',
+                    'role_prompt' => 'What role should they have?',
+                    'confirm_prompt' => 'Invite :email to :workspace as :role?',
+                    'invalid_email' => 'Please enter a valid email address.',
+                ],
+            ],
+            'roles' => [
+                'member' => 'Member',
+                'admin' => 'Admin',
+            ],
+            'workspace_suggestions' => ['demo', 'moh'],
+        ],
+    ],
+
 ];

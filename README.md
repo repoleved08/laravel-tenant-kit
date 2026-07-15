@@ -2,7 +2,7 @@
 
 [![Tests](https://github.com/mohammedelkarsh/laravel-tenant-kit/actions/workflows/tests.yml/badge.svg)](https://github.com/mohammedelkarsh/laravel-tenant-kit/actions/workflows/tests.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Release](https://img.shields.io/github/v/release/mohammedelkarsh/laravel-tenant-kit?label=stable)](https://github.com/mohammedelkarsh/laravel-tenant-kit/releases/tag/v1.2.1)
+[![Release](https://img.shields.io/github/v/release/mohammedelkarsh/laravel-tenant-kit?label=stable)](https://github.com/mohammedelkarsh/laravel-tenant-kit/releases/latest)
 [![GitHub stars](https://img.shields.io/github/stars/mohammedelkarsh/laravel-tenant-kit?style=social)](https://github.com/mohammedelkarsh/laravel-tenant-kit/stargazers)
 
 ## Build production-ready multi-tenant SaaS apps in minutes — not weeks.
@@ -10,8 +10,9 @@
 Laravel-based, scalable, and ready for real customers.  
 One codebase · isolated database per workspace · Stripe billing · Filament admin.
 
-> **v1.2.1** — API rate limiting, token abilities, team invites API, subscription endpoint, workspace suspend · [CHANGELOG](CHANGELOG.md)  
-> **v1.2.0** — OAuth, Sanctum API & SaaS analytics · [Release notes](https://github.com/mohammedelkarsh/laravel-tenant-kit/releases/tag/v1.2.0)
+> **v1.3.1** — [api-operator](https://pypi.org/project/api-operator/) + **in-app guided agent** · [docs/api-operator.md](docs/api-operator.md)  
+> **v1.3.0** — Usage-based billing · [CHANGELOG](CHANGELOG.md)  
+> **v1.2.1** — API rate limiting, token abilities, team invites · [Release notes](https://github.com/mohammedelkarsh/laravel-tenant-kit/releases/tag/v1.2.1)
 
 ---
 
@@ -61,7 +62,7 @@ Developers building **SaaS products with Laravel** who want a real starting poin
 - Filament admin panel (`/admin`)
 - Workspace signup + CLI provisioning
 - **English & Arabic** (RTL) — easy to add more languages
-- GitHub Actions CI + 47 PHPUnit tests + 42-point smoke test script
+- GitHub Actions CI + **71 PHPUnit tests** + **43-point** smoke test + **44-scenario** page audit
 - **Docker Compose** dev stack (PHP, Nginx, MySQL, Redis)
 - **PostgreSQL** supported (Stancl database-per-tenant)
 - **Redis** cache / queue / sessions with tenant key isolation
@@ -69,6 +70,8 @@ Developers building **SaaS products with Laravel** who want a real starting poin
 - **Sanctum API** tokens — central platform + per-workspace tenant API (abilities + rate limiting)
 - **SaaS analytics** widgets in Filament (growth chart, subscriptions, users)
 - **Workspace suspension** from Filament admin
+- **Usage-based billing** meters (`api_calls`, `team_seats`) with optional Stripe sync
+- **[api-operator](https://pypi.org/project/api-operator/)** YAML adapter + **in-app guided agent** (chat widget on central domain) — [guide](docs/api-operator.md)
 
 ---
 
@@ -87,7 +90,7 @@ Developers building **SaaS products with Laravel** who want a real starting poin
 
 ## Demo (GIF)
 
-Workspace signup → tenant login → dashboard → team → Filament analytics (after `db:seed`):
+Workspace signup → tenant login → dashboard → team → Filament analytics → **guided agent chat** (after `db:seed` + `operator` profile):
 
 ![Demo walkthrough](docs/screenshots/demo.gif)
 
@@ -103,11 +106,11 @@ Workspace signup → tenant login → dashboard → team → Filament analytics 
 |:---:|:---:|
 | ![Tenant dashboard](docs/screenshots/tenant-dashboard.png) | ![Billing page](docs/screenshots/billing.png) |
 
-| Team management | |
+| Team management | Guided agent (api-operator) |
 |:---:|:---:|
-| ![Team management](docs/screenshots/team-management.png) | |
+| ![Team management](docs/screenshots/team-management.png) | ![Guided agent chat](docs/screenshots/api-operator-chat.png) |
 
-> **Live demo** (after `db:seed`): [demo workspace](http://demo.laravel-tenant-kit.test:8080) (Docker) or [without port](http://demo.laravel-tenant-kit.test) (Laragon) · [admin panel](http://laravel-tenant-kit.test:8080/admin)
+> **Live demo** (after `db:seed`): [demo workspace](http://demo.laravel-tenant-kit.test:8080) (Docker) or [without port](http://demo.laravel-tenant-kit.test) (Laragon) · [admin panel](http://laravel-tenant-kit.test:8080/admin) · log in on central domain to use the chat widget
 
 ---
 
@@ -124,6 +127,8 @@ php artisan migrate && php artisan db:seed && npm run build
 Add to hosts: `127.0.0.1 laravel-tenant-kit.test` and `127.0.0.1 demo.laravel-tenant-kit.test`
 
 Open `http://laravel-tenant-kit.test` — done.
+
+Learn which setup fits you best: see [docs/laragon.md](docs/laragon.md) for a Laragon vs Docker comparison, when to use `.env.example` vs `.env.docker`, and common errors.
 
 ### Docker (alternative)
 
@@ -284,10 +289,55 @@ Filament `/admin` includes **SaaS analytics** widgets: workspace growth, active 
 
 ---
 
+## AI operator (api-operator)
+
+Use [api-operator](https://pypi.org/project/api-operator/) to manage workspaces — from the **terminal** or the **in-app guided agent** (floating chat on the central domain when logged in).
+
+### In-app guided agent
+
+1. Enable in `.env` (included in `.env.docker`):
+
+```env
+API_OPERATOR_ENABLED=true
+API_OPERATOR_URL=http://127.0.0.1:8100
+```
+
+2. Start the operator (`pip install api-operator==0.10.0` or Docker — see below).
+3. Log in on the central domain → open `/dashboard` or `/admin` → click the chat button (bottom-right).
+
+Flows: create workspace, check usage/subscription, invite teammates — with confirm step for dangerous actions.
+
+### CLI
+
+```bash
+pip install api-operator==0.10.0
+export TENANT_KIT_API_TOKEN="your-sanctum-token"
+
+api-operator chat \
+  --adapter yaml \
+  --config integrations/api-operator/adapter.yaml \
+  --base-url http://laravel-tenant-kit.test:8080
+```
+
+### Docker (recommended)
+
+```powershell
+# First time
+.\scripts\docker-setup.ps1
+
+# Daily
+.\scripts\docker-up.ps1
+```
+
+Full setup (tokens, HTTP server, integration test): **[docs/api-operator.md](docs/api-operator.md)**.
+
+---
+
 ## Production-ready proof
 
 - GitHub Actions CI on every push
 - `scripts/system-test.php` — 43 automated checks (HTTP, DB, auth, API, i18n)
+- `scripts/page-audit.php` — 44 page/scenario checks (guest, auth, Filament, API, suspend)
 - Tenant-aware cache, filesystem, queue, and Redis bootstrappers (Stancl)
 - Docker Compose for reproducible local dev
 - Config / route / view caching documented for deploy
@@ -386,22 +436,32 @@ php artisan optimize:clear && php artisan view:cache
 - [x] Workspace subscription API & team invites API (v1.2.1)
 - [x] Workspace suspend from Filament (v1.2.1)
 - [x] Usage-based billing meters (v1.3.0)
-- [ ] api-operator integration via PyPI (v1.3.1)
-- [ ] Optional KYC module (v1.4.0)
+- [x] api-operator integration + in-app guided agent (v1.3.1)
+- [ ] Optional KYC module (v1.4.0) — see [ROADMAP](docs/ROADMAP.md)
+- [ ] Extended usage meters (v1.5.0)
+- [ ] Platform webhooks + agent RAG (v1.6.0)
 
 ---
 
 ## Project structure
 
 ```
+app/Services/ApiOperatorClient.php   # proxy to api-operator (server-side token)
+app/Support/ApiOperator.php          # widget visibility rules
 app/Services/TenantProvisioner.php   # workspace creation logic
 app/Filament/                        # admin panel
-routes/web.php                       # central domain
+resources/js/api-operator-widget.js  # guided agent UI
+routes/web.php                       # central domain (+ /api-operator/*)
 routes/tenant.php                    # all workspace subdomains
 database/migrations/tenant/          # per-tenant schema
-lang/en|ar/                          # translations
+lang/en|ar/                          # translations (incl. agent menus)
 scripts/system-test.php              # smoke tests
-docker-compose.yml                   # PHP + Nginx + MySQL + Redis
+scripts/page-audit.php               # full page audit
+scripts/docker-setup.ps1             # first-time Docker + operator
+scripts/docker-up.ps1                # daily Docker start
+docker-compose.yml                   # PHP + Nginx + MySQL + Redis + api-operator
+integrations/api-operator/           # api-operator YAML adapter
+docs/api-operator.md                 # AI operator setup guide
 docs/docker.md                       # Docker & PostgreSQL guide
 docs/api.md                          # Sanctum API & OAuth setup
 ```

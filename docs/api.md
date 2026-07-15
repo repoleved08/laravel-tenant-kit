@@ -193,3 +193,12 @@ GITHUB_REDIRECT_URI=http://laravel-tenant-kit.test/auth/github/callback
 
 Routes: `GET /auth/{provider}/redirect` and `GET /auth/{provider}/callback`  
 Providers: `google`, `github`
+
+---
+
+## AI operator
+
+Operate these APIs from the terminal or the **in-app guided agent** (central domain, when `API_OPERATOR_ENABLED=true`):
+
+- Web routes: `GET /api-operator/status`, `POST /api-operator/chat` (authenticated, CSRF)
+- Full guide: [docs/api-operator.md](api-operator.md)

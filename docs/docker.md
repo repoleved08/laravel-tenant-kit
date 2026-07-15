@@ -15,8 +15,17 @@ Run the full stack (PHP 8.4, Nginx, MySQL, Redis) without Laragon or Valet.
 
 ## Quick start (MySQL)
 
+**Windows (recommended):**
+
+```powershell
+.\scripts\docker-setup.ps1   # first time — stack + migrate + seed + npm build + api-operator
+.\scripts\docker-up.ps1      # daily — docker compose --profile operator up -d
+```
+
+**Manual:**
+
 ```bash
-docker compose up -d --build
+docker compose --profile operator up -d --build
 docker compose exec app cp .env.docker .env
 docker compose exec app php artisan key:generate
 docker compose exec app php artisan migrate --seed
@@ -65,10 +74,22 @@ Default credentials are the same as local Laragon setup (see README).
 
 ```bash
 docker compose exec app php artisan tenant:provision acme "Acme Corp" --admin=boss@acme.com
-docker compose exec app php scripts/system-test.php
+docker compose exec -T -e SYSTEM_TEST_HTTP_BASE=http://nginx app php scripts/system-test.php
+docker compose exec -T -e SYSTEM_TEST_HTTP_BASE=http://nginx app php scripts/page-audit.php
 docker compose logs -f app
 docker compose down
 ```
+
+## api-operator sidecar
+
+The `operator` profile starts [api-operator](https://pypi.org/project/api-operator/) on port **8100** and mounts this repo for `adapter.yaml`.
+
+```bash
+docker compose --profile operator up -d
+curl http://127.0.0.1:8100/health
+```
+
+`.env.docker` sets `API_OPERATOR_ENABLED=true` and `API_OPERATOR_URL=http://api-operator:8100`. Log in on the central domain to use the in-app guided agent. See [api-operator.md](api-operator.md).
 
 ## PostgreSQL variant
 
@@ -116,6 +137,7 @@ This prefixes Redis keys per tenant so cache/queue data never leaks between work
 | Service | Default port |
 |---------|--------------|
 | Web (Nginx) | 8080 |
+| api-operator | 8100 (`operator` profile) |
 | MySQL | 3306 |
 | Redis | 6379 |
 | PostgreSQL | 5432 (profile `pgsql`) |

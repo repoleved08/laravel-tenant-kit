@@ -13,6 +13,9 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @if(\App\Support\ApiOperator::visibleOnRequest())
+            @vite(['resources/js/api-operator-widget.js'])
+        @endif
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100">
@@ -32,5 +35,8 @@
                 {{ $slot }}
             </main>
         </div>
+        @if(\App\Support\ApiOperator::visibleOnRequest())
+            @include('partials.api-operator-widget')
+        @endif
     </body>
 </html>

@@ -2,6 +2,23 @@
 
 All notable changes to this project are documented here.
 
+## [1.3.1] — 2026-06-11
+
+### Added
+
+- **In-app guided agent** — floating chat widget on the central domain (dashboard, Filament, landing when logged in); sequential menus and step-by-step flows (create workspace, usage, subscription, invite member); confirm Yes/No chips for dangerous actions
+- **api-operator proxy** — `POST /api-operator/chat` and `GET /api-operator/status`; server-side Sanctum token via `ApiOperatorClient` (tokens never exposed to the browser)
+- **api-operator integration** — [docs/api-operator.md](docs/api-operator.md) (install, tokens, CLI, HTTP server, Docker `operator` profile)
+- **Adapter guide** — expanded `integrations/api-operator/README.md`; synced tools with [api-operator](https://pypi.org/project/api-operator/) v0.10.0
+- **Docker scripts** — `scripts/docker-setup.ps1` / `.sh` (first-time) and `scripts/docker-up.ps1` / `.sh` (daily start with operator)
+- **i18n** — guided agent menus and flow copy in `lang/en/app.php` and `lang/ar/app.php`
+- **Tests** — `ApiOperatorChatTest` (proxy, confirm status, widget HTML, built assets) and `ApiOperatorAdapterTest`
+
+### Changed
+
+- **README** — AI operator section, new screenshot (`api-operator-chat.png`), updated demo GIF
+- **Filament** — loads `api-operator-widget.js` via Vite render hook when operator is enabled
+
 ## [1.3.0] — 2026-06-14
 
 ### Added
